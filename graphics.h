@@ -49,11 +49,18 @@ class Graphics
     GLint m_hasTexture;
 
 
-    Sphere* m_sphere;
-    Sphere* m_sphere2;
-    Sphere* m_sphere3;
+    Sphere* m_sun;
+    Sphere* m_mercury;
+    Sphere* m_venus;
+    Sphere* m_earth;
+    Sphere* m_moon;
+    Sphere* m_mars;
+    Sphere* m_jupiter;
+    Sphere* m_saturn;
+    Sphere* m_neptune;
+    
 
-    Mesh* m_mesh;
+    Mesh* m_ship;
 
 
 
