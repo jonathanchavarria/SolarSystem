@@ -57,7 +57,12 @@ class Graphics
     Sphere* m_mars;
     Sphere* m_jupiter;
     Sphere* m_saturn;
+    Sphere* m_uranus;
     Sphere* m_neptune;
+
+    Sphere* m_ceres;
+    Sphere* m_eris;
+    Sphere* m_haumea;
     
 
     Mesh* m_ship;
