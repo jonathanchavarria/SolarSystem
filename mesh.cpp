@@ -9,7 +9,7 @@ Mesh::Mesh()
 	angle = 0.0f;
 	pivotLocation = glm::vec3(0.f, 0.f, 0.f);
 	model = glm::translate(glm::mat4(1.0f), pivotLocation);
-
+	model *= glm::scale(glm::vec3(.02, .02, .02));
 	// Buffer Set Up
 	if (!InitBuffers()) {
 		printf("Some buffers not initialized.\n");
@@ -26,7 +26,7 @@ Mesh::Mesh(glm::vec3 pivot, const char* fname)
 	angle = 0.0f;
 	pivotLocation = pivot;
 	model = glm::translate(glm::mat4(1.0f), pivotLocation);
-
+	model *= glm::scale(glm::vec3(.02, .02, .02));
 	// Buffer Set Up
 	if (!InitBuffers()) {
 		printf("some buffers not initialized.\n");
@@ -45,6 +45,7 @@ Mesh::Mesh(glm::vec3 pivot, const char* fname, const char* tname)
 	angle = 0.0f;
 	pivotLocation = pivot;
 	model = glm::translate(glm::mat4(1.0f), pivotLocation);
+	model *= glm::scale(glm::vec3(.02, .02, .02));
 	
 	// Buffer Set Up
 	if (!InitBuffers()) {
@@ -98,6 +99,7 @@ void Mesh::Render(GLint posAttribLoc, GLint colAttribLoc)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
 	// Render
+	//glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 24);
 	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
 
 	// Disable vertex arrays
@@ -134,8 +136,8 @@ void Mesh::Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, GLi
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
 	// Render
-	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
-
+	//glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, 4);
 	// Disable vertex arrays
 	glDisableVertexAttribArray(posAttribLoc);
 	glDisableVertexAttribArray(colAttribLoc);

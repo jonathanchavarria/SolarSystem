@@ -12,6 +12,8 @@ using namespace std;
 #include "sphere.h"
 #include "mesh.h"
 
+
+
 #define numVBOs 2;
 #define numIBs 2;
 
@@ -23,7 +25,7 @@ class Graphics
     ~Graphics();
     bool Initialize(int width, int height);
     void HierarchicalUpdate2(double dt);
-    void Render();
+    void Render(double dt);
 
     Camera* getCamera() { return m_camera; }
 
@@ -47,7 +49,11 @@ class Graphics
     GLint m_colorAttrib;
     GLint m_tcAttrib;
     GLint m_hasTexture;
+   
 
+    GLint m_normalMatrix;
+
+    GLint m_tfLoc;
 
     Sphere* m_sun;
     Sphere* m_mercury;
@@ -63,12 +69,32 @@ class Graphics
     Sphere* m_ceres;
     Sphere* m_eris;
     Sphere* m_haumea;
-    
+    const static unsigned int amount = 40;
+    vector<Mesh*> innerAsteroids; 
+    vector<Mesh*> outerAsteroids;
+    void installLights();
 
     Mesh* m_ship;
 
+    GLuint globalAmbLoc, ambLoc, diffLoc, specLoc, posLoc, mambLoc, mdiffLoc, mspecLoc, mshiLoc;
+    float globalAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float lightAmbient[4] = { .15f, .15f, .15f, .15f };
+    float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float lightSpecular[4] = { .20f, .15f, .10f, 1.0f };
+    float lightPos[3] = { 0.0, 0.0, 0.0 };
+
+    
+    glm::mat4* innerBelt;
+    glm::mat4* outerBelt;
+   
+
+    glm::vec3 currentLightPos;
 
 
+    float matAmb[4] = { 3.20, 3.20, 3.20, 1.0 };
+    float matDif[4] = { 1.0, 1.0, 1.0, 1.0 };
+    float matSpe[4] = { 5.0, 5.0, 5.0, 1.0 };
+    float matShi = 2.0;
 };
 
 #endif /* GRAPHICS_H */
