@@ -15,9 +15,10 @@ Sphere::Sphere(int prec) { // prec is precision, or number of slices
     setupBuffers();
     //setupModelMatrix(glm::vec3(0., 0., 0.), 0., 1.);
     hasTex = false;
+    hasNorm = false;
 }
 
-Sphere::Sphere(int prec, const char* fname) { // prec is precision, or number of slices
+Sphere::Sphere(int prec, const char* fname, const char* nname) { // prec is precision, or number of slices
 
     init(prec);
 
@@ -32,6 +33,12 @@ Sphere::Sphere(int prec, const char* fname) { // prec is precision, or number of
         hasTex = true;
     else
         hasTex = false;
+
+    m_normaltexture = new Texture(fname);
+    if (m_normaltexture)
+        hasNorm = true;
+    else
+        hasNorm = false;
 }
 
 
@@ -90,6 +97,8 @@ void Sphere::Render(GLint posAttribLoc, GLint colAttribLoc, GLint tcAttribLoc, G
     else
         glUniform1i(hasTextureLoc, false);
 
+
+
   
     
     // Bind your Element Array
@@ -135,6 +144,15 @@ void Sphere::setupBuffers() {
     glGenBuffers(1, &IB);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+
+    //glGenBuffers(1, &TB);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TB);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * texCoords.size(), &texCoords[0], GL_STATIC_DRAW);
+
+    //glGenBuffers(1, &NB);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NB);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * normals.size(), &normals[0], GL_STATIC_DRAW);
+
 }
 
 void Sphere::setupModelMatrix(glm::vec3 pivot, float angle, float scale) {

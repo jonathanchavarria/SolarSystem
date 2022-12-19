@@ -16,10 +16,12 @@ class Camera
     void cameraPosVert(float speed);
     void cameraPosHorz(float speed);
     void zoom(float fov);
-  
+    glm::vec3 getPos() {
+        return cameraPos;
+    }
+    glm::vec3 cameraFront = glm::vec3(0.0, 1.0, 1.0);
   private:
     glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 20.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0, 1.0, 1.0);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     double x = 0.0;
     double y = 10.0;

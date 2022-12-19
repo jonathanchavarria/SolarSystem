@@ -63,3 +63,4 @@ void Camera::zoom(float fov) {
         100.0f); //Distance to the far plane, 
 
 }
+

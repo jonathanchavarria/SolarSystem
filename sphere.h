@@ -15,7 +15,7 @@ public:
     void Update(glm::mat4 matModel);
 
     Sphere(int prec);
-    Sphere(int prec, const char* fname);
+    Sphere(int prec, const char* fname, const char* nname);
 
     int getNumVertices();
     int getNumIndices();
@@ -24,9 +24,14 @@ public:
     std::vector<glm::vec2> getTexCoords();
     std::vector<glm::vec3> getNormals();
 
-    GLuint getTextureID() { return m_texture->getTextureID(); }
-    
+    GLuint getTextureID(bool normal) { 
+        if (normal)
+            return m_normaltexture->getTextureID();
+        else
+            return m_texture->getTextureID(); }
+    //bool loadTexture(const char* textFile, int textureType);
     bool hasTex;
+    bool hasNorm;
 
 private:
     glm::vec3 pivotLocation;
@@ -36,6 +41,7 @@ private:
     GLuint VB;
     GLuint IB;
     Texture* m_texture;
+    Texture* m_normaltexture;
 
 
     GLuint vao;

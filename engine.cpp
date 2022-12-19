@@ -163,7 +163,7 @@ long long Engine::GetCurrentTimeMillis()
 void Engine::Display(GLFWwindow* window, double time) {
 
    
-    m_graphics->Render();
+    m_graphics->Render(time);
    
     m_window->Swap();
    
