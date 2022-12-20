@@ -74,7 +74,8 @@ class Graphics
     vector<Mesh*> outerAsteroids;
     void installLights();
 
-    Mesh* m_ship;
+    Mesh* m_mesh;
+    Object* m_skyBox;
 
     GLuint globalAmbLoc, ambLoc, diffLoc, specLoc, posLoc, mambLoc, mdiffLoc, mspecLoc, mshiLoc;
     float globalAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

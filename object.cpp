@@ -17,11 +17,11 @@ Object::Object()
 
 }
 
-Object::Object(glm::vec3 pivot)
+Object::Object(glm::vec3 pivot, const char* fname)
 {
 	// Vertex Set Up
 	setupVerticies();
-	
+
 	// Model Set Up
 	angle = 0.0f;
 	pivotLocation = pivot;
@@ -31,6 +31,19 @@ Object::Object(glm::vec3 pivot)
 	if (!InitBuffers()) {
 		printf("Some buffers not initialized.\n");
 	}
+	hasTex = false;
+	hasNorm = false;
+	m_texture = new Texture(fname);
+	if (m_texture)
+		hasTex = true;
+	else
+		hasTex = false;
+
+	m_normaltexture = new Texture(fname);
+	if (m_normaltexture)
+		hasNorm = true;
+	else
+		hasNorm = false;
 }
 
 Object::~Object()
@@ -66,6 +79,7 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc)
 	glVertexAttribPointer(posAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
+
 	// Bind your Element Array
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
@@ -77,7 +91,49 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc)
 	glDisableVertexAttribArray(colAttribLoc);
 }
 
+void Object::Render(GLint positionAttribLoc, GLint colorAttribLoc, GLint tcAttribLoc, GLint hasTex) {
 
+	glBindVertexArray(vao);
+	// Enable vertex attibute arrays for each vertex attrib
+	glEnableVertexAttribArray(positionAttribLoc);
+	glEnableVertexAttribArray(colorAttribLoc);
+	glEnableVertexAttribArray(tcAttribLoc);
+
+	// Bind your VBO
+	glBindBuffer(GL_ARRAY_BUFFER, VB);
+
+	// Set vertex attribute pointers to the load correct data. Update here to load the correct attributes.
+	glVertexAttribPointer(positionAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(colorAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	glVertexAttribPointer(tcAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoord));
+
+
+	// If has texture, set up texture unit(s): update here for texture rendering
+	// If has texture, set up texture unit(s) Update here to activate and assign texture unit
+	if (m_texture != NULL) {
+		glUniform1i(hasTex, true);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_texture->getTextureID());
+	}
+	else
+		glUniform1i(hasTex, false);
+
+
+
+
+
+	// Bind your Element Array
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+	// Render
+	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+
+	// Disable vertex arrays
+	glDisableVertexAttribArray(positionAttribLoc);
+	glDisableVertexAttribArray(colorAttribLoc);
+	glDisableVertexAttribArray(tcAttribLoc);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 bool Object::InitBuffers() {
 
 	// For OpenGL 3
@@ -123,9 +179,12 @@ void Object::setupVerticies() {
 	};
 
 	// The index works at a 0th index
-	for (unsigned int i = 0; i < Indices.size(); i++)
+/*	for (unsigned int i = 0; i < Indices.size(); i++)
 	{
-		Indices[i] = Indices[i] - 1;
+		Vertices.push_back(Vertex(vertices[Indices[i]], normals[Indices[i]], texCoords[Indices[i]]));
+		Indices.push_back(i);
 	}
-
+	*/
 }
+
+
