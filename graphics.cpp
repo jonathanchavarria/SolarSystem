@@ -108,6 +108,12 @@ bool Graphics::Initialize(int width, int height)
 	m_haumea = new Sphere(48, "assets\\Haumea.jpg", "assets\\Haumea-n.jpg");
 
 	//m_ship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f), "assets\\SpaceShip-1.obj", "assets\\SpaceShip-1.png");
+		//m_skyBox = new Object(glm::vec3(0.0f, 0.0f, 0.0f), "assets\\Galaxy-cubemap2.png");
+
+	m_skyBox = new Sphere(64, "assets\\jw.jpg", "assets\\jw.jpg");
+
+
+	m_mesh = new Mesh(glm::vec3(0.0f, 0.0f, 0.0f), "assets\\SpaceShip-1.obj", "assets\\SpaceShip-1.png");
 
 
 	innerBelt = new glm::mat4[amount];
@@ -176,7 +182,17 @@ void Graphics::HierarchicalUpdate2(double dt) {
 	
 	if (m_sun != NULL)
 		m_sun->Update(localTransform);
+	
+	// position of the skyBox
+	scale = { 5.0f, 5.0f, 5.0f };
+	modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));  // sun's coordinate
+	localTransform = modelStack.top();	
+	localTransform = glm::translate(glm::mat4(1.f), m_camera->getPos());
+	localTransform *= glm::scale(glm::vec3(30, 30, 30));
+	if (m_skyBox != NULL)
+		m_skyBox->Update(localTransform);
 
+	modelStack.pop();
 	speed = { 2, 2, 2 };
 	dist = { 3. , 0., 3. };
 	rotVector = { 0. , 1., 0. };
@@ -402,6 +418,13 @@ void Graphics::HierarchicalUpdate2(double dt) {
 	localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
 	if (m_haumea != NULL)
 		m_haumea->Update(localTransform);
+
+
+	localTransform = glm::translate(glm::mat4(1.f), m_camera->getPos());
+	localTransform *= glm::scale(glm::vec3(0.005, 0.005, 0.005));
+	localTransform *= glm::translate(glm::mat4(1.f), glm::vec3(0.0, -25.0, -40.0));
+	if (m_mesh != NULL)
+		m_mesh->Update(localTransform);
 
 	modelStack.pop();
 
@@ -813,8 +836,37 @@ void Graphics::Render(double dt)
 			m_neptune->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
 		}
 	}
-
-
+	if (m_mesh != NULL) {
+		glUniform1i(m_hasTexture, false);
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_mesh->GetModel()));
+		if (m_mesh->hasTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_mesh->getTextureID());
+			GLuint sampler = m_shader->GetUniformLocation("samp0");
+			if (sampler == INVALID_UNIFORM_LOCATION)
+			{
+				printf("Sampler Not found not found\n");
+			}
+			glUniform1i(sampler, 0);
+			m_mesh->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+		}
+	}
+	if (m_skyBox != NULL) {
+		GLuint hasN = m_shader->GetUniformLocation("hasNormalMap");
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_skyBox->GetModel()));
+		if (m_skyBox->hasTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_skyBox->getTextureID(false));
+			GLuint sampler = m_shader->GetUniformLocation("samp0");
+			if (sampler == INVALID_UNIFORM_LOCATION)
+			{
+				printf("Sampler Not found not found\n");
+			}
+			glUniform1i(sampler, 0);
+			glUniform1i(hasN, false);
+			m_skyBox->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+		}
+	}
 	if (m_ceres != NULL) {
 		GLuint hasN = m_shader->GetUniformLocation("hasNormalMap");
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_ceres->GetModel()));
